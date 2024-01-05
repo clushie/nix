@@ -1,3 +1,4 @@
+#include "error.hh"
 #include "fetchers.hh"
 #include "users.hh"
 #include "cache.hh"
@@ -727,6 +728,11 @@ struct GitInputScheme : InputScheme
         Input input(_input);
 
         auto repoInfo = getRepoInfo(input);
+
+        if (getExportIgnoreAttr(input)
+            && getSubmodulesAttr(input)) {
+            throw UnimplementedError("exportIgnore and submodules are not supported together yet");
+        }
 
         auto [accessor, final] =
             input.getRef() || input.getRev() || !repoInfo.isLocal
